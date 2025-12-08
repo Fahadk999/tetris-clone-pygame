@@ -20,5 +20,5 @@ class Block:
         pygame.draw.rect(screen, self.color, self.rect)
 
     def setPosition(self, x = 0, y = 0):
-        self.rect.x = self.g_width//2 if x == 0 else x
-        self.rect.y = 0 if y == 0 else y
+        self.rect.x = x
+        self.rect.y = y

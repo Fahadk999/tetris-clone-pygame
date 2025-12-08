@@ -24,6 +24,7 @@ class Square:
         self.topRight = Block(g_width, g_height, color, self.x + w, self.y)
         self.botLeft = Block(g_width, g_height, color, self.x, self.y + h)
         self.botRight = Block(g_width, g_height, color, self.x + w, self.y + h)
+
         self.smallBlocks = (
             b,
             self.topRight,
@@ -32,6 +33,7 @@ class Square:
         )
 
         self.rect = pygame.Rect(self.x, self.y, w*2, h*2)
+
         self.isGrounded = False
 
     def draw(self, screen):
@@ -54,14 +56,25 @@ class Square:
         nextRect = pygame.Rect(self.rect.x, nextY, self.width, self.height)
 
         for other in otherBlocks:
-            if other is self:
-                continue
+            if isinstance(other.rect, pygame.Rect):
+                if other is self:
+                    continue
 
-            if nextRect.colliderect(other.rect):
-                self.rect.y = other.rect.y - self.height
-                self.updateSmallBlocks()
-                self.groundBlock()
-                return
+                if nextRect.colliderect(other.rect):
+                    self.rect.y = other.rect.y - self.height
+                    self.updateSmallBlocks()
+                    self.groundBlock()
+                    return
+            elif isinstance(other.rect, tuple):
+                if other is self:
+                    continue
+
+                for collider in other.rect:
+                    if nextRect.colliderect(collider):
+                        self.rect.y = collider.y - self.height
+                        self.updateSmallBlocks()
+                        self.groundBlock()
+                        return
         
         self.rect.y = nextY
         self.updateSmallBlocks()
@@ -74,21 +87,33 @@ class Square:
                 for other in otherBlocks:
                     if other is self:
                         continue
-                    if nextRect.colliderect(other.rect):
-                        return
+                    if isinstance(other.rect, pygame.Rect):
+                        if nextRect.colliderect(other.rect):
+                            return
+                    elif isinstance(other.rect, tuple):
+                        for collider in other.rect:
+                            if nextRect.colliderect(collider):
+                                return
                 self.rect.x = nextX
                 self.updateSmallBlocks()
+
             if key == pygame.K_d and self.rect.x + self.width < self.g_width:
                 nextX = self.rect.x + 30
                 nextRect = pygame.Rect(nextX, self.rect.y, self.rect.width, self.rect.height)
                 for other in otherBlocks:
                     if other is self:
                         continue
-                    if nextRect.colliderect(other.rect):
-                        return
+                    if isinstance(other.rect, pygame.Rect):
+                        if nextRect.colliderect(other.rect):
+                            return
+                    elif isinstance(other.rect, tuple):
+                        for collider in other.rect:
+                            if nextRect.colliderect(collider):
+                                return
+
                 self.rect.x = nextX
                 self.updateSmallBlocks()
-    
+
     def updateSmallBlocks(self):
         x = self.rect.x
         y = self.rect.y 

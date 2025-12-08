@@ -2,6 +2,7 @@ import pygame
 import sys
 
 from game import Game
+from lineblock import LineBlock
 
 pygame.init()
 
