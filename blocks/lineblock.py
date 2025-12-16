@@ -1,6 +1,6 @@
 import pygame
 
-from square import Square
+from blocks.square import Square
 
 # make rotations for lblock also
 

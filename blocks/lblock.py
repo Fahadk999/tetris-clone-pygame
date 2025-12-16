@@ -1,6 +1,6 @@
 import pygame
 
-from square import Square
+from blocks.square import Square
 
 class LBlock(Square):
     width = 90

@@ -1,6 +1,6 @@
 import pygame
 
-from lblock import LBlock
+from blocks.lblock import LBlock
 
 class SnakeBlock(LBlock):
     # width = 90

@@ -3,10 +3,10 @@ from random import randint
 
 from colors import Color
 from surface import Surface
-from square import Square
-from lblock import LBlock
-from lineblock import LineBlock
-from otherlblock import OtherLBlock
+from blocks.square import Square
+from blocks.lblock import LBlock
+from blocks.lineblock import LineBlock
+from blocks.otherlblock import OtherLBlock
 
 class Game:
     SPAWN_BLOCK_EVENT = pygame.event.custom_type()
@@ -36,6 +36,9 @@ class Game:
         otherLBlock = OtherLBlock(self.g_width, self.g_height, "green")
         
         spawnblocks = [
+                square,
+                lineBlock,
+                lblock,
                 otherLBlock
             ]
 

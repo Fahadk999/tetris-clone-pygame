@@ -1,6 +1,6 @@
 import pygame
 
-from block import Block
+from blocks.block import Block
 
 class Square:
     width = 60
