@@ -2,7 +2,6 @@ import pygame
 import sys
 
 from game import Game
-from lineblock import LineBlock
 
 pygame.init()
 
@@ -33,3 +32,5 @@ while running:
 
 pygame.quit()
 sys.exit()
+
+# look in to task.txt for more to do

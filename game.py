@@ -6,6 +6,7 @@ from surface import Surface
 from square import Square
 from lblock import LBlock
 from lineblock import LineBlock
+from otherlblock import OtherLBlock
 
 class Game:
     SPAWN_BLOCK_EVENT = pygame.event.custom_type()
@@ -32,11 +33,10 @@ class Game:
         square = Square(self.g_width, self.g_height, Color.BLUE)
         lblock = LBlock(self.g_width, self.g_height, Color.RED)
         lineBlock = LineBlock(self.g_width, self.g_height, Color.PURPLE)
+        otherLBlock = OtherLBlock(self.g_width, self.g_height, "green")
         
         spawnblocks = [
-                square,
-                lblock,
-                lineBlock,
+                otherLBlock
             ]
 
         newShape = spawnblocks[randint(0, len(spawnblocks) - 1)]

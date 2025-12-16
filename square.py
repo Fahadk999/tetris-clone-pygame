@@ -14,6 +14,8 @@ class Square:
         # The "origin block" of the square
         self.topLeft = Block(g_width, g_height, color)
 
+        self.rotation = 0
+
         # Compute relative blocks
         b = self.topLeft
         w = b.width
@@ -81,7 +83,7 @@ class Square:
 
     def move(self, key, otherBlocks):
         if not self.isGrounded:
-            if key == pygame.K_a and self.rect.x > 0:
+            if (key == pygame.K_a or key == pygame.K_LEFT) and self.rect.x > 0:
                 nextX = self.rect.x - 30
                 nextRect = pygame.Rect(nextX, self.rect.y, self.rect.width, self.rect.height)
                 for other in otherBlocks:
@@ -97,7 +99,7 @@ class Square:
                 self.rect.x = nextX
                 self.updateSmallBlocks()
 
-            if key == pygame.K_d and self.rect.x + self.width < self.g_width:
+            if (key == pygame.K_a or key == pygame.K_RIGHT) and self.rect.x + self.width < self.g_width:
                 nextX = self.rect.x + 30
                 nextRect = pygame.Rect(nextX, self.rect.y, self.rect.width, self.rect.height)
                 for other in otherBlocks:
@@ -114,6 +116,10 @@ class Square:
                 self.rect.x = nextX
                 self.updateSmallBlocks()
 
+            if key == pygame.K_r:
+                self.rotate()
+                self.updateSmallBlocks()
+
     def updateSmallBlocks(self):
         x = self.rect.x
         y = self.rect.y 
@@ -128,3 +134,6 @@ class Square:
 
         for b in self.smallBlocks:
             b.isGrounded = True
+
+    def rotate(self):
+        pass

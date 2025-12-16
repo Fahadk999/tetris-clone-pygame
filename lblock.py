@@ -4,11 +4,13 @@ from square import Square
 
 class LBlock(Square):
     width = 90
-    # height is same 60
-    # speed is same
+    height = 60
 
     width1 = width // 3 # 30 for 90
     width2 = width * 2/3 # 60 for 90
+    height1 = height//2 # 30 for 60
+    height2 = height * 3/2 # 90 for 30
+    height3 = height # 60 for 60, this is for a const 60 value for later use
     
     def __init__(self, g_width, g_height, color):
         super().__init__(g_width, g_height, color)
@@ -38,7 +40,7 @@ class LBlock(Square):
 
         self.body = pygame.Rect(self.x, self.y, self.width, self.height)
         self.verticalRect = pygame.Rect(self.x, self.y, self.width1, self.height)
-        self.horizontalRect = pygame.Rect(self.x + self.width1, self.y, self.width2, self.height//2)
+        self.horizontalRect = pygame.Rect(self.x + self.width1, self.y, self.width2, self.height1)
 
         self.rect = (
                 self.verticalRect,
@@ -60,7 +62,7 @@ class LBlock(Square):
             return
 
         nextRectVertical = pygame.Rect(self.verticalRect.x, nextVerticalY, self.width1, self.height)
-        nextRectHorizontal = pygame.Rect(self.horizontalRect.x, nextHorizontalY, self.width2, self.height//2)
+        nextRectHorizontal = pygame.Rect(self.horizontalRect.x, nextHorizontalY, self.width2, self.height1)
 
         for other in otherBlocks:
             if isinstance(other.rect, pygame.Rect):
@@ -68,15 +70,11 @@ class LBlock(Square):
                     continue
                 
                 if nextRectVertical.colliderect(other.rect):
-                    self.body.y = other.rect.y - self.height 
-                    self.updateSmallBlocks()
-                    self.groundBlock()
+                    self.updateBodyVertical(other.rect)
                     return
 
                 elif nextRectHorizontal.colliderect(other.rect):
-                    self.body.y = other.rect.y - self.height//2 if self.rotation == 0 else other.rect.y - self.height
-                    self.updateSmallBlocks()
-                    self.groundBlock()
+                    self.updateBodyHorizontal(other.rect)
                     return
             elif isinstance(other.rect, tuple):
                 if other is self:
@@ -84,15 +82,11 @@ class LBlock(Square):
 
                 for collider in other.rect:
                     if nextRectVertical.colliderect(collider):
-                        self.body.y = collider.y - self.height
-                        self.updateSmallBlocks()
-                        self.groundBlock()
+                        self.updateBodyVertical(collider)
                         return
 
                     elif nextRectHorizontal.colliderect(collider):
-                        self.body.y = collider.y - self.height//2 if self.rotation == 0 else collider.y - self.height
-                        self.updateSmallBlocks()
-                        self.groundBlock()
+                        self.updateBodyHorizontal(collider)
                         return
                         
         self.body.y = nextY
@@ -100,10 +94,10 @@ class LBlock(Square):
 
     def move(self, key, otherBlocks):
         if not self.isGrounded:
-            if key == pygame.K_a and self.body.x > 0:
+            if (key == pygame.K_a or key == pygame.K_LEFT) and self.body.x > 0:
                 nextX = self.body.x - 30
                 nextRectVertical = pygame.Rect(nextX, self.body.y, self.width1, self.height)
-                nextRectHorizontal = pygame.Rect(nextX + self.height//2, self.body.y, self.width2, self.height//2)
+                nextRectHorizontal = pygame.Rect(nextX + self.height1, self.body.y, self.width2, self.height1)
                 for other in otherBlocks:
                     if other is self:
                          continue
@@ -121,10 +115,10 @@ class LBlock(Square):
                 self.body.x = nextX
                 self.updateSmallBlocks()
 
-            if key == pygame.K_d and self.body.x + self.width < self.g_width:
+            if (key == pygame.K_d or key == pygame.K_RIGHT) and self.body.x + self.width < self.g_width:
                 nextX = self.body.x + 30
                 nextRectVertical = pygame.Rect(nextX, self.body.y, self.width1, self.height)
-                nextRectHorizontal = pygame.Rect(nextX + self.height//2, self.body.y, self.width2, self.height//2)
+                nextRectHorizontal = pygame.Rect(nextX + self.height1, self.body.y, self.width2, self.height1)
                 for other in otherBlocks:
                     if other is self:
                          continue
@@ -152,31 +146,109 @@ class LBlock(Square):
         
         match self.rotation:
             case 0:
+                self.setBodyHorizontal()
                 self.verticalRect.x = x
                 self.verticalRect.y = y
                 self.horizontalRect.x = x + self.width1
                 self.horizontalRect.y = y
 
                 self.topLeft.setPosition(x, y)
-                self.oneDown.setPosition(x, y + self.height//2)
+                self.oneDown.setPosition(x, y + self.height1) 
                 self.oneRight.setPosition(x + self.width1, y)
                 self.twoRight.setPosition(x + self.width2, y)
             case 1:
+                self.setBodyHorizontal()
                 self.verticalRect.x = x + self.width2
                 self.verticalRect.y = y
                 self.horizontalRect.x = x
-                self.horizontalRect.y = y + self.height//2
+                self.horizontalRect.y = y + self.height1
 
-                self.topLeft.setPosition(x, y + self.height//2)
-                self.oneRight.setPosition(x + self.width1, y + self.height//2)
-                self.oneDown.setPosition(x + self.width2, y + self.height//2) 
+                self.topLeft.setPosition(x, y + self.height1)
+                self.oneRight.setPosition(x + self.width1, y + self.height1)
+                self.oneDown.setPosition(x + self.width2, y + self.height1)
                 self.twoRight.setPosition(x + self.width2, y)
+            case 2:
+                self.setBodyVertical()
+                self.verticalRect.x = x + self.height1
+                self.verticalRect.y = y + self.width1
+                self.horizontalRect.x = x
+                self.horizontalRect.y = y
+
+                self.topLeft.setPosition(x + self.width1, y)
+                self.oneDown.setPosition(x, y)
+                self.oneRight.setPosition(x + self.width1, y + self.height1)
+                self.twoRight.setPosition(x + self.width1, y + self.height3)
+            case 3:
+                self.setBodyVertical()
+                self.verticalRect.x = x
+                self.verticalRect.y = y
+                self.horizontalRect.x = x
+                self.horizontalRect.y = y + self.height3
+
+                self.topLeft.setPosition(x, y)
+                self.oneRight.setPosition(x, y + self.height1)
+                self.twoRight.setPosition(x, y + self.height3)
+                self.oneDown.setPosition(x + self.width1, y + self.height3)
 
     def rotate(self):
-        if not self.rotation == 1:
+        if not self.rotation == 3:
             self.rotation += 1
         else:
             self.rotation = 0
 
-    def updateBody(self):
-        self.body = pygame.Rect(self.)
+    def setBodyVertical(self):
+        x = self.body.x
+        y = self.body.y
+
+        self.width = 60
+        self.height = 90
+
+        self.body = pygame.Rect(x, y, self.width, self.height)
+
+    def setBodyHorizontal(self):
+        x = self.body.x
+        y = self.body.y
+
+        self.width = 90
+        self.height = 60
+
+        self.body = pygame.Rect(x, y, self.width, self.height)
+        
+    def updateBodyHorizontal(self, collider):
+        match self.rotation:
+            case 0:
+                self.body.y = collider.y - self.height1
+                self.updateSmallBlocks()
+                self.groundBlock()
+            case 1:
+                self.body.y = collider.y - self.height
+                self.updateSmallBlocks()
+                self.groundBlock()
+            case 2:
+                self.body.y = collider.y - self.height1
+                self.updateSmallBlocks()
+                self.groundBlock()
+            case 3:
+                self.body.y = collider.y - self.height2
+                self.updateSmallBlocks()
+                self.groundBlock()
+
+    def updateBodyVertical(self, collider):
+        match self.rotation:
+            case 0:
+                self.body.y = collider.y - self.height
+                self.updateSmallBlocks()
+                self.groundBlock()
+            case 1:
+                self.body.y = collider.y - self.height
+                self.updateSmallBlocks()
+                self.groundBlock()
+            case 2:
+                self.body.y = collider.y - self.height2
+                self.updateSmallBlocks()
+                self.groundBlock()
+            case 3:
+                self.body.y = collider.y - self.height2
+                self.updateSmallBlocks()
+                self.groundBlock()
+
