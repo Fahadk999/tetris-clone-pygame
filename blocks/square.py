@@ -83,7 +83,7 @@ class Square:
 
     def move(self, key, otherBlocks):
         if not self.isGrounded:
-            if (key == pygame.K_a or key == pygame.K_LEFT) and self.rect.x > 0:
+            if key in (pygame.K_a, pygame.K_LEFT) and self.rect.x > 0:
                 nextX = self.rect.x - 30
                 nextRect = pygame.Rect(nextX, self.rect.y, self.rect.width, self.rect.height)
                 for other in otherBlocks:
@@ -99,7 +99,7 @@ class Square:
                 self.rect.x = nextX
                 self.updateSmallBlocks()
 
-            if (key == pygame.K_a or key == pygame.K_RIGHT) and self.rect.x + self.width < self.g_width:
+            if key in (pygame.K_d, pygame.K_RIGHT) and self.rect.x + self.width < self.g_width:
                 nextX = self.rect.x + 30
                 nextRect = pygame.Rect(nextX, self.rect.y, self.rect.width, self.rect.height)
                 for other in otherBlocks:

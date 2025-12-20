@@ -94,7 +94,7 @@ class LBlock(Square):
 
     def move(self, key, otherBlocks):
         if not self.isGrounded:
-            if (key == pygame.K_a or key == pygame.K_LEFT) and self.body.x > 0:
+            if key in (pygame.K_a, pygame.K_LEFT) and self.body.x > 0:
                 nextX = self.body.x - 30
                 nextRectVertical = pygame.Rect(nextX, self.body.y, self.width1, self.height)
                 nextRectHorizontal = pygame.Rect(nextX + self.height1, self.body.y, self.width2, self.height1)
@@ -115,7 +115,7 @@ class LBlock(Square):
                 self.body.x = nextX
                 self.updateSmallBlocks()
 
-            if (key == pygame.K_d or key == pygame.K_RIGHT) and self.body.x + self.width < self.g_width:
+            if key in (pygame.K_d, pygame.K_RIGHT) and self.body.x + self.width < self.g_width:
                 nextX = self.body.x + 30
                 nextRectVertical = pygame.Rect(nextX, self.body.y, self.width1, self.height)
                 nextRectHorizontal = pygame.Rect(nextX + self.height1, self.body.y, self.width2, self.height1)
